@@ -10,5 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.4.1"
+  },
+  "dependencies": {
+    "lodash": "^3.10.1"
   }
 }
