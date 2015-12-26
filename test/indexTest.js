@@ -11,10 +11,10 @@ describe('app state', function() {
     describe('set', function() {
         it('can set nested object', function() {
 
-            appState.init().set('data.a.b', 3).should.deep.equal({
-                data : {
-                    a : {
-                        b : 3
+            appState.init().set('user.pets.dogs', 3).should.deep.equal({
+                user : {
+                    pets : {
+                        dogs : 3
                     }
                 }
             });
@@ -24,8 +24,8 @@ describe('app state', function() {
         it('can get existing nested object', function() {
             var state = appState.init();
 
-            state.set('data.a.b', { c : 4 });
-            state.get('data.a.b.c').should.equal(4);
+            state.set('modal.edit.write', { number : 4 });
+            state.get('modal.edit.write.number').should.equal(4);
         });
     });
     describe('subscribe', function() {
@@ -37,11 +37,11 @@ describe('app state', function() {
         it('subscriber count returns number of subscribers for exact path', function() {
             var state = appState.init();
 
-            state.subscribe('a.b', function() {});
-            state.subscribe('a.b', function() {});
-            state.subscribe('a.b', function() {});
+            state.subscribe('reports.daily', function() {});
+            state.subscribe('reports.daily', function() {});
+            state.subscribe('reports.daily', function() {});
 
-            state.subscribe.subscribers('a.b').should.equal(3);
+            state.subscribe.subscribers('reports.daily').should.equal(3);
         });
         describe('subscription notification', function() {
             it('will notify subscribers on exact path that is set', function() {
