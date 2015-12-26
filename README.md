@@ -5,4 +5,3 @@
 A place to store the object that represents your app state. You can create subscriptions, set, and get paths.
 
 See the tests for example usage.
-
