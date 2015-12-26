@@ -1,15 +1,16 @@
 {
   "name": "app-state",
-  "version": "0.0.0",
+  "version": "0.0.0-beta.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
-  "author": "",
+  "author": "Peter Ajtai <peter.ajtai@thinksolid.com>",
   "license": "ISC",
   "devDependencies": {
-    "chai": "^3.4.1"
+    "chai": "^3.4.1",
+    "chai-spies": "^0.7.1"
   },
   "dependencies": {
     "lodash": "^3.10.1"
