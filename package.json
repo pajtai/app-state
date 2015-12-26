@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "author": "Peter Ajtai <peter.ajtai@thinksolid.com>",
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.4.1",
-    "chai-spies": "^0.7.1"
+    "chai-spies": "^0.7.1",
+    "mocha": "^2.3.4"
   },
   "dependencies": {
     "lodash": "^3.10.1"
