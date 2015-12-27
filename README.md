@@ -17,9 +17,8 @@ var state = require('app-state').init();
 ### Init: `require('app-state').init()` - returns state
 
 ### Set: 
-
-`state(path, value)` - returns state
-`state.set(path, value)` - returns state
+* `state(path, value)` - returns state
+* `state.set(path, value)` - returns state
 
 You can use the name method or the shortcut method that is the state instance itself.
 
@@ -32,8 +31,11 @@ will be created, not arrays.
 
 Subscription notifications are run after setting.
 
-### Get: `state.get(path)` - returns value
-### Get (shortcut method): `state(path)` - returns value
+### Get: 
+* `state.get(path)` - returns value
+* `state(path)` - returns value
+
+You can use the name method or the shortcut method that is the state instance itself.
 
 ```javascript
 state.get('user.library.book.4');
