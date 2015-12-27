@@ -17,6 +17,7 @@ var state = require('app-state').init();
 ### Init: `require('app-state').init()` - returns state
 
 ### Set: `state.set(path, value)` - returns state
+### Set (shortcut method): `state(path, value)` - returns state
 
 ```javascript
 state.set('user.profile', { library : library });
@@ -28,6 +29,7 @@ will be created, not arrays.
 Subscription notifications are run after setting.
 
 ### Get: `state.get(path)` - returns value
+### Get (shortcut method): `state(path)` - returns value
 
 ```javascript
 state.get('user.library.book.4');
@@ -81,3 +83,4 @@ The concept is similar to that of a dispatcher in Flux.
 ## Future features:
 
 * Ordered subscriptions (before / after other subscription).
+* Implement https://github.com/facebook/immutable-js as the data store.

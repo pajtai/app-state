@@ -24,12 +24,36 @@ describe('app state', function() {
 
 
             state.subscribe('user', function() {
-                state.set('doing.another.set');
+                state.set('doing.another.set',0);
             });
 
-            state.set.bind(state, 'user').should.throw(Error);
+            state.set.bind(state, 'user', 0).should.throw(Error);
 
         });
+        describe('shortcut set', function() {
+            it('can use the shortcut set method', function() {
+                var state = appState.init();
+                state('user.pets.dogs', 3).data.should.deep.equal({
+                    user : {
+                        pets : {
+                            dogs : 3
+                        }
+                    }
+                });
+            });
+            it('cannot set while another set is running', function() {
+                var state = appState.init();
+
+
+                state.subscribe('user', function() {
+                    state('doing.another.set', 0);
+                });
+
+                state.bind(state, 'user', 0).should.throw(Error);
+
+            });
+        });
+
     });
     describe('get', function() {
         it('can get existing nested object', function() {
@@ -37,6 +61,12 @@ describe('app state', function() {
 
             state.set('modal.edit.write', { number : 4 });
             state.get('modal.edit.write.number').should.equal(4);
+        });
+        it('can use shortcut get method', function() {
+            var state = appState.init();
+
+            state.set('modal.edit.write', { number : 4 });
+            state('modal.edit.write.number').should.equal(4);
         });
     });
     describe('subscribe', function() {

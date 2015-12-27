@@ -18,18 +18,25 @@ function init() {
         state = {
             data : {},
             subscribers : {}
-        },
+        };
         /**
          * @typedef {object} stateMethods
          */
-        methods = {
-            get         : get.bind(state),
-            set         : set.bind(state, setting),
-            subscribe   : subscribe.bind(state),
-            subscribers : subscribers.bind(state)
-        };
+    return _.extend(shortcut.bind(state, setting), {
+        get         : get.bind(state),
+        set         : set.bind(state, setting),
+        subscribe   : subscribe.bind(state),
+        subscribers : subscribers.bind(state)
+    });
+}
 
-    return methods;
+function shortcut(setting, // bound variable
+                  path, value) {
+    if (3 <= arguments.length) {
+        return set.call(this, setting, path, value);
+    } else {
+        return get.call(this, path);
+    }
 }
 
 /**
