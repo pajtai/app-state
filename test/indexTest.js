@@ -2,7 +2,6 @@
 
 var appState = require('../index'),
     chai = require('chai'),
-    bluebird = require('bluebird'),
     spies = require('chai-spies');
 
 chai.should();
