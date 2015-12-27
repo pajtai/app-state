@@ -16,8 +16,12 @@ var state = require('app-state').init();
 
 ### Init: `require('app-state').init()` - returns state
 
-### Set: `state.set(path, value)` - returns state
-### Set (shortcut method): `state(path, value)` - returns state
+### Set: 
+
+`state(path, value)` - returns state
+`state.set(path, value)` - returns state
+
+You can use the name method or the shortcut method that is the state instance itself.
 
 ```javascript
 state.set('user.profile', { library : library });
