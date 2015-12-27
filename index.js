@@ -12,7 +12,10 @@ module.exports = {
  */
 function init() {
 
-    var state = {
+    var setting = {
+            ongoing : false
+        },
+        state = {
             data : {},
             subscribers : {}
         },
@@ -21,11 +24,10 @@ function init() {
          */
         methods = {
             get         : get.bind(state),
-            set         : set.bind(state),
-            subscribe   : subscribe.bind(state)
+            set         : set.bind(state, setting),
+            subscribe   : subscribe.bind(state),
+            subscribers : subscribers.bind(state)
         };
-
-    methods.subscribe.subscribers = subscribers.bind(state);
 
     return methods;
 }
@@ -47,11 +49,11 @@ function subscribe(path, subscriber) {
 
     this.subscribers[path] = this.subscribers[path] || [];
     this.subscribers[path].push(subscriber);
-    return this.subscribers[path].length;
+    return this;
 }
 
 /**
- *
+ * Return the number of subscribers on a path.
  * @param path {string}
  * @returns {number}
  */
@@ -60,7 +62,7 @@ function subscribers(path) {
 }
 
 /**
- *
+ * Get the value on a path. Returns undefined if can't find it.
  * @param path {string}
  * @returns {*}
  */
@@ -82,16 +84,24 @@ function get(path) {
 }
 
 /**
- *
+ * Set the value on a path. Creates empty objects on the way down if they don't exist.
  * @param path
  * @param value
  * @returns {object}
  */
-function set(path, value) {
+function set(setting, // This variable is bound
+             path, value) {
     var arr,
         item,
         originalPath = path,
         obj = this.data;
+
+    // Cannot set while another set is in progress
+    if (setting.ongoing) {
+        throw new Error('Cannot set while another set is in progress.');
+    }
+
+    setting.ongoing = true;
 
     arr = path.split('.');
     while(arr.length > 1) {
@@ -106,7 +116,9 @@ function set(path, value) {
     obj[arr.shift()] = value;
     notifySubscribers.call(this, originalPath);
 
-    return this.data;
+    setting.ongoing = false;
+
+    return this;
 }
 
 function notifySubscribers(changedPath) {
@@ -115,8 +127,9 @@ function notifySubscribers(changedPath) {
 
     _.forEach(this.subscribers, function(subscribers, subscriptionPath) {
 
-        var startsWith = new RegExp('^' + subscriptionPath),
-            contains = new RegExp('^' + changedPath);
+        // using [.] vs \\. for readability
+        var startsWith = new RegExp('^' + subscriptionPath + '[.]'),
+            contains = new RegExp('^' + changedPath + '[.]');
 
         // Notify if sub path is included in changed path
         if (startsWith.test(changedPath)) {
@@ -138,5 +151,5 @@ function notifySubscribers(changedPath) {
         }
     });
 
-
+    return this;
 }

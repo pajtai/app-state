@@ -1,10 +1,17 @@
 {
   "name": "app-state",
-  "version": "0.0.0-beta.1",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pajtai/app-state.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pajtai/app-state/issues"
   },
   "author": "Peter Ajtai <peter.ajtai@thinksolid.com>",
   "license": "ISC",
