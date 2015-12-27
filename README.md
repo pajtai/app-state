@@ -20,7 +20,7 @@ var state = require('app-state').init();
 * `state(path, value)` - returns state
 * `state.set(path, value)` - returns state
 
-You can use the name method or the shortcut method that is the state instance itself.
+You can use the named method or the shortcut method that is the state instance itself.
 
 ```javascript
 state.set('user.profile', { library : library });
@@ -35,7 +35,7 @@ Subscription notifications are run after setting.
 * `state.get(path)` - returns value
 * `state(path)` - returns value
 
-You can use the name method or the shortcut method that is the state instance itself.
+You can use the named method or the shortcut method that is the state instance itself.
 
 ```javascript
 state.get('user.library.book.4');
