@@ -1,4 +1,4 @@
-# app-state - beta
+# app-state
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
