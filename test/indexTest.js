@@ -9,9 +9,18 @@ chai.use(spies);
 
 describe('app state', function() {
     describe('set', function() {
+        it('can set the root', function() {
+            var state = appState.init();
+            state.set('', {a:{b:{c:4}}});
+            state.get().should.deep.equal({a:{b:{c:4}}});
+        });
         it('can set nested object', function() {
 
-            appState.init().set('user.pets.dogs', 3).data.should.deep.equal({
+            var state = appState.init();
+
+            state.set('user.pets.dogs', 3);
+
+            state.get().should.deep.equal({
                 user : {
                     pets : {
                         dogs : 3
@@ -33,7 +42,8 @@ describe('app state', function() {
         describe('shortcut set', function() {
             it('can use the shortcut set method', function() {
                 var state = appState.init();
-                state('user.pets.dogs', 3).data.should.deep.equal({
+                state('user.pets.dogs', 3);
+                state().should.deep.equal({
                     user : {
                         pets : {
                             dogs : 3
@@ -56,6 +66,18 @@ describe('app state', function() {
 
     });
     describe('get', function() {
+        it('can get root', function() {
+            var state = appState.init();
+            state.set('a.b', 3);
+            state.set('c', 2);
+            state.get().should.deep.equal({
+                a : {
+                    b : 3
+                },
+                c : 2
+            });
+
+        });
         it('can get existing nested object', function() {
             var state = appState.init();
 
@@ -70,6 +92,17 @@ describe('app state', function() {
         });
     });
     describe('subscribe', function() {
+        it('can subscribe to the root', function() {
+            var state = appState.init(),
+                spy = chai.spy();
+
+            state.subscribe('', spy);
+
+            spy.should.have.been.called.exactly(0);
+            state.set('a.b', 2);
+            state.set('d.e.f.g', 3);
+            spy.should.have.been.called.exactly(2);
+        });
         it('subscriber count is initially zero for a path', function() {
             var state = appState.init();
 

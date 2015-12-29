@@ -16,9 +16,10 @@ function init() {
             ongoing : false
         },
         state = {
-            data : {},
+            data : { },
             subscribers : {}
         };
+
         /**
          * @typedef {object} stateMethods
          */
@@ -54,9 +55,10 @@ function shortcut(setting, // bound variable
  */
 function subscribe(path, subscriber) {
 
+    path = getPath(path);
+
     this.subscribers[path] = this.subscribers[path] || [];
     this.subscribers[path].push(subscriber);
-    return this;
 }
 
 /**
@@ -65,6 +67,7 @@ function subscribe(path, subscriber) {
  * @returns {number}
  */
 function subscribers(path) {
+    path = getPath(path);
     return undefined === this.subscribers[path] ? 0 : this.subscribers[path].length;
 }
 
@@ -75,11 +78,9 @@ function subscribers(path) {
  */
 function get(path) {
     var arr,
-        data = this.data;
+        data = this;
 
-    if (!path) {
-        return data;
-    }
+    path = getPath(path);
 
     arr = path.split('.');
     while(arr.length && data) {
@@ -100,8 +101,11 @@ function set(setting, // This variable is bound
              path, value) {
     var arr,
         item,
-        originalPath = path,
-        obj = this.data;
+        originalPath,
+        obj = this;
+
+    path = getPath(path);
+    originalPath = path;
 
     // Cannot set while another set is in progress
     if (setting.ongoing) {
@@ -124,8 +128,6 @@ function set(setting, // This variable is bound
     notifySubscribers.call(this, originalPath);
 
     setting.ongoing = false;
-
-    return this;
 }
 
 function notifySubscribers(changedPath) {
@@ -157,6 +159,8 @@ function notifySubscribers(changedPath) {
             });
         }
     });
+}
 
-    return this;
+function getPath(path) {
+    return path ? 'data.' + path : 'data';
 }
