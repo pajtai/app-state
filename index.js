@@ -132,9 +132,11 @@ function set(setting, // This variable is bound
 
 function notifySubscribers(changedPath) {
 
-    var self = this;
+    var self = this,
+        tonotify = [];
 
-    _.forEach(this.subscribers, function(subscribers, subscriptionPath) {
+
+    _.forEach(this.subscribers, function (subscribers, subscriptionPath) {
 
         // using [.] vs \\. for readability
         var startsWith = new RegExp('^' + subscriptionPath + '[.]'),
@@ -142,22 +144,26 @@ function notifySubscribers(changedPath) {
 
         // Notify if sub path is included in changed path
         if (startsWith.test(changedPath)) {
-            _.forEach(subscribers, function(subscriber) {
-                subscriber.call(self, changedPath);
+            _.forEach(subscribers, function (subscriber) {
+                tonotify.push(subscriber);
             });
 
-        // Notify if exact match
+            // Notify if exact match
         } else if (subscriptionPath === changedPath) {
-            _.forEach(subscribers, function(subscriber) {
-                subscriber.call(self, changedPath);
+            _.forEach(subscribers, function (subscriber) {
+                tonotify.push(subscriber);
             });
 
-        // Notify if set path is included in subscription path
+            // Notify if set path is included in subscription path
         } else if (contains.test(subscriptionPath)) {
-            _.forEach(subscribers, function(subscriber) {
-                subscriber.call(self, changedPath);
+            _.forEach(subscribers, function (subscriber) {
+                tonotify.push(subscriber);
             });
         }
+    });
+
+    _.uniq(tonotify).forEach(function (subscriber) {
+        subscriber.call(self, changedPath);
     });
 }
 
