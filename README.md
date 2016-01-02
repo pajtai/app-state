@@ -17,13 +17,14 @@ Create a new app state object:
 var state = require('app-state').init();
 ```
 
-## Methods
 
 ### Init: `require('app-state').init([ options ])` - returns state
 
 Available options:
 
 `options.devTools` - set this truthy if you want to use the [dev tools Chrome Extension](https://github.com/Duder-onomy/app-state-chrome-extension)
+
+## Instance Methods
 
 ### Set: 
 * `state(path, value)` - returns state
