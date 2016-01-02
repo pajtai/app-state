@@ -1,8 +1,13 @@
 # app-state
+v0.2.0-beta.1
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
 A place to store the object that represents your app state. You can create subscriptions, set, and get paths.
+
+[Chrome extension](https://github.com/Duder-onomy/app-state-chrome-extension)
+
+![appstate-live-update](https://cloud.githubusercontent.com/assets/1643937/12075681/b1d5caba-b13c-11e5-8c8e-54eb239bcb93.gif)
 
 ## Usage
 

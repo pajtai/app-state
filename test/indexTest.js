@@ -10,7 +10,7 @@ chai.use(spies);
 describe('app state', function() {
     describe('set', function() {
         it('can set the root', function() {
-            var state = appState.init();
+            var state = appState.init({devTools:true});
             state.set('', {a:{b:{c:4}}});
             state.get().should.deep.equal({a:{b:{c:4}}});
         });
@@ -41,9 +41,11 @@ describe('app state', function() {
         });
         describe('shortcut set', function() {
             it('can use the shortcut set method', function() {
-                var state = appState.init();
+                var state = appState.init(),
+                    returned;
                 state('user.pets.dogs', 3);
-                state().should.deep.equal({
+                returned = state();
+                returned.should.deep.equal({
                     user : {
                         pets : {
                             dogs : 3
@@ -59,7 +61,11 @@ describe('app state', function() {
                     state('doing.another.set', 0);
                 });
 
-                state.bind(state, 'user', 0).should.throw(Error);
+                (function() {
+                    console.log('START');
+                    state('user', 0);
+                    console.log('STOP');
+                }).should.throw(Error);
 
             });
         });

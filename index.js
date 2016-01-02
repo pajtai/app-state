@@ -10,34 +10,54 @@ module.exports = {
  * Creates a new application state and exposes the methods to modify and track it.
  * @returns {stateMethods}
  */
-function init() {
+function init(options) {
+
+    options = options || {};
 
     var setting = {
-            ongoing : false
+            ongoing : false,
+            devTools : !!options.devTools
         },
         state = {
-            data : { },
+            data : {},
             subscribers : {}
-        };
+        },
+        instance;
+    /**
+     * @typedef {object} stateMethods
+     */
+    instance = function() {
+        if (arguments.length >= 2) {
+            return shortcut.call(state, setting, instance, arguments[0], arguments[1]);
+        } else {
+            return shortcut.call(state, setting, instance, arguments[0]);
+        }
+    };
 
-        /**
-         * @typedef {object} stateMethods
-         */
-    return _.extend(shortcut.bind(state, setting), {
+    if (setting.devTools) {
+        global.appState = instance;
+    }
+
+    return _.extend(instance, {
         get         : get.bind(state),
-        set         : set.bind(state, setting),
+        set         : set.bind(state, setting, instance),
         subscribe   : subscribe.bind(state),
         subscribers : subscribers.bind(state)
     });
 }
 
-function shortcut(setting, // bound variable
+function shortcut(setting, instance, // bound variable
                   path, value) {
-    if (3 <= arguments.length) {
-        return set.call(this, setting, path, value);
+    // Have to use argument length to be able to set things like shortcut('a.b', false)
+
+    var returned;
+
+    if (arguments.length >= 4) {
+        returned =  set.call(this, setting, instance, path, value);
     } else {
-        return get.call(this, path);
+        returned = get.call(this, path);
     }
+    return returned;
 }
 
 /**
@@ -78,9 +98,12 @@ function subscribers(path) {
  */
 function get(path) {
     var arr,
-        data = this;
+        data = this.data;
 
-    path = getPath(path);
+
+    if (!path) {
+        return data;
+    }
 
     arr = path.split('.');
     while(arr.length && data) {
@@ -93,11 +116,13 @@ function get(path) {
 
 /**
  * Set the value on a path. Creates empty objects on the way down if they don't exist.
+ * @param setting
+ * @param instance
  * @param path
  * @param value
- * @returns {object}
+ * @returns {set}
  */
-function set(setting, // This variable is bound
+function set(setting, instance, // This variable is bound
              path, value) {
     var arr,
         item,
@@ -125,12 +150,13 @@ function set(setting, // This variable is bound
     }
 
     obj[arr.shift()] = value;
-    notifySubscribers.call(this, originalPath);
-
+    notifySubscribers.call(this, originalPath, setting, instance);
     setting.ongoing = false;
+
+    return this;
 }
 
-function notifySubscribers(changedPath) {
+function notifySubscribers(changedPath, setting, instance) {
 
     var self = this;
 
@@ -146,19 +172,26 @@ function notifySubscribers(changedPath) {
                 subscriber.call(self, changedPath);
             });
 
-        // Notify if exact match
+            // Notify if exact match
         } else if (subscriptionPath === changedPath) {
             _.forEach(subscribers, function(subscriber) {
                 subscriber.call(self, changedPath);
             });
 
-        // Notify if set path is included in subscription path
+            // Notify if set path is included in subscription path
         } else if (contains.test(subscriptionPath)) {
             _.forEach(subscribers, function(subscriber) {
                 subscriber.call(self, changedPath);
             });
         }
     });
+
+    // Notify chrome extensions last
+    if (setting.devTools && global.dispatchEvent) {
+        global.dispatchEvent(new global.CustomEvent('change-app-state', { detail : instance()} ));
+    }
+
+    return this;
 }
 
 function getPath(path) {
