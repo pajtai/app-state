@@ -34,8 +34,11 @@ function init(options) {
         }
     };
 
-    if (setting.devTools) {
+    if (setting.devTools && global.addEventListener) {
         global.appState = instance;
+        global.addEventListener('change-app-state-from-panel', function (event) {
+            instance('', event.detail);
+        });
     }
 
     return _.extend(instance, {
