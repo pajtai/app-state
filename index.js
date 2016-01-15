@@ -196,8 +196,12 @@ function notifySubscribers(changedPath, setting, instance) {
     });
 
     // Notify chrome extensions last
-    if (setting.devTools && global.dispatchEvent) {
-        global.dispatchEvent(new global.CustomEvent('change-app-state', { detail : instance()} ));
+    if (setting.devTools && global.dispatchEvent && global.CustomEvent) {
+        try {
+            global.dispatchEvent(new global.CustomEvent('change-app-state', { detail : instance()} ));
+        } catch (e) {
+            console.log('dispatch error', e);
+        }
     }
 
     return this;
