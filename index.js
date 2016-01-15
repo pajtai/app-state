@@ -35,10 +35,15 @@ function init(options) {
     };
 
     if (setting.devTools && global.addEventListener) {
-        global.appState = instance;
-        global.addEventListener('change-app-state-from-panel', function (event) {
-            instance('', event.detail);
-        });
+        try {
+            global.appState = instance;
+            global.addEventListener('change-app-state-from-panel', function (event) {
+                instance('', event.detail);
+            });
+        } catch (e) {
+            console.log('add event listener error', e);
+        }
+
     }
 
     return _.extend(instance, {
