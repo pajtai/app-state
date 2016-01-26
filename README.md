@@ -66,7 +66,7 @@ state.subscribe('user.profile.library', callback);
 Subscriptions get called on any set that can potentially change them, whether it does or not.
 Can subscribe to properties that do not yet exist.
 
-The `user.profile.library` subscription gets notified for any of the following set paths:
+Te `user.profile.library` subscription gets notified for any of the following set paths:
 
 * `user.profile.library`
 * `user`
@@ -80,6 +80,13 @@ The `user.profile.library` subscription does not get notified for any of the fol
 ### Subscribers: `state.subscribers(path)` - returns length
 
 Returns number of subscribers on an exact path. Doesn't count longer or shorter paths.
+
+### Calculations: `state.calculations(calculationsObject)` - returns state
+
+The `calculationsObject` is an object where each key is the path of the calculated property to set and the value are
+callbacks that return the desired value to set for that path.
+
+Subscribers are notified after calculations are run.
 
 ## Theory
 

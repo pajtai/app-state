@@ -1,6 +1,7 @@
 'use strict';
 
-var _ = require('lodash');
+var _ = require('lodash'),
+    Model = require('model-object');
 
 module.exports = {
     init : init
@@ -19,7 +20,7 @@ function init(options) {
             devTools : !!options.devTools
         },
         state = {
-            data : {},
+            model : Model({}),
             subscribers : {}
         },
         instance;
@@ -50,7 +51,8 @@ function init(options) {
         get         : get.bind(state),
         set         : set.bind(state, setting, instance),
         subscribe   : subscribe.bind(state),
-        subscribers : subscribers.bind(state)
+        subscribers : subscribers.bind(state),
+        calculations: calculations.bind(state)
     });
 }
 
@@ -100,26 +102,33 @@ function subscribers(path) {
 }
 
 /**
+ * An object of calculations to run after each set.
+ * The keys are the paths to set.
+ * The values should be callbacks that return the value to set.
+ * @param calcs
+ */
+function calculations(calcs) {
+    var newCalcs = {};
+
+    this._calcs = calcs;
+
+    _.forEach(calcs, function(value, key) {
+        var newPath = getPath(key);
+        newCalcs[newPath] = function() {
+            return value.apply(this, arguments);
+        };
+    });
+    this.model.calculations(newCalcs);
+    return this;
+}
+
+/**
  * Get the value on a path. Returns undefined if can't find it.
  * @param path {string}
  * @returns {*}
  */
 function get(path) {
-    var arr,
-        data = this.data;
-
-
-    if (!path) {
-        return data;
-    }
-
-    arr = path.split('.');
-    while(arr.length && data) {
-        // will work with arrays
-        data = data[arr.shift()];
-    }
-
-    return data;
+    return this.model.get(getPath(path));
 }
 
 /**
@@ -132,10 +141,9 @@ function get(path) {
  */
 function set(setting, instance, // This variable is bound
              path, value) {
-    var arr,
-        item,
-        originalPath,
-        obj = this;
+
+    var originalPath,
+        self = this;
 
     path = getPath(path);
     originalPath = path;
@@ -147,18 +155,17 @@ function set(setting, instance, // This variable is bound
 
     setting.ongoing = true;
 
-    arr = path.split('.');
-    while(arr.length > 1) {
-        item = arr.shift();
-        if (!obj[item]) {
-            // will not work with arrays
-            obj[item] = {};
-        }
-        obj = obj[item];
+    this.model.set(path, value);
+
+    notifySubscribers.call(this, originalPath, setting, instance);
+
+    // This should be cleaned up to only notify if changed, but for now, notify all subscribers
+    if (this._calcs) {
+        _.forEach(this._calcs, function (value, key) {
+            notifySubscribers.call(self, getPath(key), setting, instance);
+        });
     }
 
-    obj[arr.shift()] = value;
-    notifySubscribers.call(this, originalPath, setting, instance);
     setting.ongoing = false;
 
     return this;

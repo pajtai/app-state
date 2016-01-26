@@ -200,4 +200,47 @@ describe('app state', function() {
             });
         });
     });
+    describe('calculated properties', function() {
+        it('should be able to set calculated properties', function() {
+            var state = appState.init();
+            state.calculations({
+                'user.name.full' : function() {
+                    return [
+                        state('user.name.first'),
+                        state('user.name.last')
+                    ].join(' ').trim();
+                }
+            });
+
+            state('user.name.first', 'Flim');
+            state('user.name.last', 'Flam');
+            state('user.name.full').should.equal('Flim Flam');
+        });
+
+        it.only('subscribers should be notified after calculations', function() {
+            var state = appState.init(),
+                spy = chai.spy();
+
+            state.subscribe('user.name.full', function() {
+                spy(state('user.name.full'));
+            });
+
+            state.calculations({
+                'user.name.full': function () {
+                    return [
+                        state('user.name.first'),
+                        state('user.name.last')
+                    ].join(' ').trim();
+                }
+            });
+
+            state('user.name.first', 'Flim');
+            state('user.name.last', 'Flam');
+            state('user.name.full').should.equal('Flim Flam');
+
+            spy.should.have.been.called.exactly(2);
+            spy.__spy.calls[0].should.deep.equal(['Flim']);
+            spy.__spy.calls[1].should.deep.equal(['Flim Flam']);
+        });
+    });
 });
