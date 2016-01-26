@@ -100,3 +100,4 @@ The concept is similar to that of a dispatcher in Flux.
 
 * Ordered subscriptions (before / after other subscription).
 * Implement https://github.com/facebook/immutable-js as the data store.
+* will use get-setter npm as dependency
