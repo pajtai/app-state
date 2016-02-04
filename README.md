@@ -1,5 +1,5 @@
 # app-state
-v0.3.0
+v0.4.0
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
@@ -87,6 +87,8 @@ The `calculationsObject` is an object where each key is the path of the calculat
 callbacks that return the desired value to set for that path.
 
 Subscribers are notified after calculations are run.
+
+Caution: every new calculations call clobber all previous calculations. This should be fixed.
 
 ### Transform: `state.transform(key, transformFunction, varargs...)` - returns the new value that was set
 
