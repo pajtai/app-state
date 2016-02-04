@@ -47,9 +47,11 @@ function init(options) {
 
     }
 
+    // This seems overly complicated
     return _.extend(instance, {
         get         : get.bind(state),
         set         : set.bind(state, setting, instance),
+        transform   : transform.bind(instance),
         subscribe   : subscribe.bind(state),
         subscribers : subscribers.bind(state),
         calculations: calculations.bind(state)
@@ -162,6 +164,8 @@ function set(setting, instance, // This variable is bound
     // This should be cleaned up to only notify if changed, but for now, notify all subscribers
     if (this._calcs) {
         _.forEach(this._calcs, function (value, key) {
+
+            // The actual caclculations are done by the backing model-object
             notifySubscribers.call(self, getPath(key), setting, instance);
         });
     }
@@ -169,6 +173,28 @@ function set(setting, instance, // This variable is bound
     setting.ongoing = false;
 
     return this;
+}
+
+/**
+ * Pass in the key for the value to change, and the callback that will change it, along with the varargs to call the
+ * callback with.
+ * The callback will be called with the value for the key followed by the varargs. The context is null.
+ *
+ * This method can be used to create easily unit testable transforms to store logic as to how the appState is allowed
+ * to be updated.
+ * @param key
+ * @param callback
+ * @param {...}
+ */
+function transform(key, callback) {
+    var varargs = [].splice.call(arguments, 2),
+        result;
+
+    varargs.unshift(this.get(key));
+
+    result = callback.apply(null, varargs);
+    this.set(key, result);
+    return result;
 }
 
 function notifySubscribers(changedPath, setting, instance) {

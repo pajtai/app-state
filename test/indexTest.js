@@ -71,6 +71,32 @@ describe('app state', function() {
         });
 
     });
+    describe('transform', function() {
+        it('should be able to change a key', function() {
+            var state = appState.init();
+
+            state.transform('user.profile.library', libraryTransform, [ 'Tom Sawyer', 'Monte Cristo' ]);
+
+            state('').should.deep.equal({
+                user : {
+                    profile : {
+                        library : [
+                            'Tom Sawyer',
+                            'Monte Cristo'
+                        ]
+                    }
+                }
+            });
+
+            function libraryTransform(library, books) {
+                library = library || [];
+
+                library = library.concat(books);
+
+                return library;
+            }
+        });
+    });
     describe('get', function() {
         it('can get root', function() {
             var state = appState.init();
@@ -217,7 +243,7 @@ describe('app state', function() {
             state('user.name.full').should.equal('Flim Flam');
         });
 
-        it.only('subscribers should be notified after calculations', function() {
+        it('subscribers should be notified after calculations', function() {
             var state = appState.init(),
                 spy = chai.spy();
 

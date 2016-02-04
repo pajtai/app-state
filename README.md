@@ -88,6 +88,19 @@ callbacks that return the desired value to set for that path.
 
 Subscribers are notified after calculations are run.
 
+### Transform: `state.transform(key, transformFunction, varargs...)` - returns the new value that was set
+
+The transform function is called with `state.get(key)` followed by the varargs.
+
+Calling transform is equivalent to:
+
+```javascript
+state.set(key, transformFunction(state.get(key), ...));
+```
+
+This method allows a collection of transform calls to represent allowed ways to update the state. Since these calls
+ can be implemented as simple input / output with no side effects, it allows easy testing as well.
+
 ## Theory
 
 The idea behind having an app state is that it is a unified event channel to communicate
