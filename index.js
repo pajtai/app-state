@@ -56,6 +56,13 @@ function init(options) {
         subscribers : subscribers.bind(state),
         calculations: calculations.bind(state)
     });
+
+    // Give a chance for mixins to modify the instance
+    _.forEach(options.mixins, function(mixin) {
+        mixin(instance);
+    });
+
+    return instance;
 }
 
 function shortcut(setting, instance, // bound variable
