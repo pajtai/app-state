@@ -48,13 +48,12 @@ function init(options) {
     }
 
     // This seems overly complicated
-    return _.extend(instance, {
+    instance = _.extend(instance, {
         get         : get.bind(state),
         set         : set.bind(state, setting, instance),
         transform   : transform.bind(instance),
         subscribe   : subscribe.bind(state),
-        subscribers : subscribers.bind(state),
-        calculations: calculations.bind(state)
+        subscribers : subscribers.bind(state)
     });
 
     // Give a chance for mixins to modify the instance
@@ -111,27 +110,6 @@ function subscribers(path) {
 }
 
 /**
- * An object of calculations to run after each set.
- * The keys are the paths to set.
- * The values should be callbacks that return the value to set.
- * @param calcs
- */
-function calculations(calcs) {
-    var newCalcs = {};
-
-    this._calcs = calcs;
-
-    _.forEach(calcs, function(value, key) {
-        var newPath = getPath(key);
-        newCalcs[newPath] = function() {
-            return value.apply(this, arguments);
-        };
-    });
-    this.model.calculations(newCalcs);
-    return this;
-}
-
-/**
  * Get the value on a path. Returns undefined if can't find it.
  * @param path {string}
  * @returns {*}
@@ -167,15 +145,6 @@ function set(setting, instance, // This variable is bound
     this.model.set(path, value);
 
     notifySubscribers.call(this, originalPath, setting, instance);
-
-    // This should be cleaned up to only notify if changed, but for now, notify all subscribers
-    if (this._calcs) {
-        _.forEach(this._calcs, function (value, key) {
-
-            // The actual caclculations are done by the backing model-object
-            notifySubscribers.call(self, getPath(key), setting, instance);
-        });
-    }
 
     setting.ongoing = false;
 

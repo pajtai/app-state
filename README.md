@@ -81,15 +81,6 @@ The `user.profile.library` subscription does not get notified for any of the fol
 
 Returns number of subscribers on an exact path. Doesn't count longer or shorter paths.
 
-### Calculations: `state.calculations(calculationsObject)` - returns state
-
-The `calculationsObject` is an object where each key is the path of the calculated property to set and the value are
-callbacks that return the desired value to set for that path.
-
-Subscribers are notified after calculations are run.
-
-Caution: every new calculations call clobber all previous calculations. This should be fixed.
-
 ### Transform: `state.transform(key, transformFunction, varargs...)` - returns the new value that was set
 
 The transform function is called with `state.get(key)` followed by the varargs.
@@ -102,6 +93,46 @@ state.set(key, transformFunction(state.get(key), ...));
 
 This method allows a collection of transform calls to represent allowed ways to update the state. Since these calls
  can be implemented as simple input / output with no side effects, it allows easy testing as well.
+
+## Mixins
+
+An array of mixins can be passed in on initialization. Each mixin will be called with the state instance before the state
+instance is returned. 
+
+### Stream Mixin
+
+This mixin allows you to subscribe to appState changes in the form of a stream. A stream is returned that is only written
+to when a subscription for the passed in key would run:
+
+### `state.stream(key)` - returns [highland](http://highlandjs.org) stream.
+
+To use `state.stream` you must pass in the mixin. This functionality is separated out as a mixin so that if you do not
+use it then you do not pull in highland as a dependency.
+
+```javascript
+var AppState = require('app-state'),
+    streamMixin = require('app-state/mixin/stream');
+    
+appState = AppState.init({ mixins : [ streamMixin ] });
+    
+appState
+    .stream('user')
+    .filter(function(user) {
+        return user.authorized;
+    })
+    .each(function(user) {
+        console.log('user is authorized', user);
+    });
+```
+
+Note that since appState functions via reference, if you do a toArray on the stream all items will look the same. If 
+you template the results in an each, then each update will show the current state. In the case of toArray, each item
+in the array is also showing the current state at the time the results of toArray are inspected.
+
+Note:
+
+Highland is a convenient "Reactive Extensions like" library for Node users. Since it is built on top of the built on 
+node stream functionality it is quite compact and its behavior depends on a stable core feature of Node.
 
 ## Theory
 
@@ -123,3 +154,7 @@ The concept is similar to that of a dispatcher in Flux.
 * Ordered subscriptions (before / after other subscription).
 * Implement https://github.com/facebook/immutable-js as the data store.
 * will use get-setter npm as dependency
+
+## Release notes:
+
+* 1.0.0 - Backward incompatibility - removed stat.calculations, since it can be achieved with transforms or the stream mixin.
