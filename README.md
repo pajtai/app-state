@@ -26,7 +26,7 @@ Available options:
 
 ## Instance Methods
 
-### Set: 
+### Set:
 * `state(path, value)` - returns state
 * `state.set(path, value)` - returns state
 
@@ -41,7 +41,7 @@ will be created, not arrays.
 
 Subscription notifications are run after setting.
 
-### Get: 
+### Get:
 * `state.get(path)` - returns value
 * `state(path)` - returns value
 
@@ -76,6 +76,10 @@ The `user.profile.library` subscription does not get notified for any of the fol
 
 * `api`
 * `user.profile.notifications`
+
+### Unsubscribe: `state.unsubscribe(path, callback)` - returns state
+
+Unsubscribe from changes on the specified path with the specified callback.
 
 ### Subscribers: `state.subscribers(path)` - returns length
 
@@ -112,7 +116,7 @@ changes to react to changes with business logic.
 
 Having a central communication hub allows the modularization of apps and the adding and
 modification of features and business logic easily. The app state doesn't contain any
-business logic itself, just the Model layer should have that. 
+business logic itself, just the Model layer should have that.
 
 To keep things simply you cannot run a set while another one is running.
 

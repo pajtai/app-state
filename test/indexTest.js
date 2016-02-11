@@ -226,6 +226,26 @@ describe('app state', function() {
             });
         });
     });
+    describe('unsubscribe', function() {
+        it('can unsubscribe from an existing subscription', function() {
+            var state = appState.init(),
+                spy = chai.spy();
+
+            state.set('duder.galt', 1);
+
+            state.subscribe('duder.galt', spy);
+
+            state.set('duder.galt', 2);
+
+            spy.should.have.been.called.exactly(1);
+
+            state.unsubscribe('duder.galt', spy);
+
+            state.set('duder.galt', 3);
+
+            spy.should.have.been.called.exactly(1);
+        });
+    });
     describe('calculated properties', function() {
         it('should be able to set calculated properties', function() {
             var state = appState.init();

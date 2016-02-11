@@ -53,6 +53,7 @@ function init(options) {
         set         : set.bind(state, setting, instance),
         transform   : transform.bind(instance),
         subscribe   : subscribe.bind(state),
+        unsubscribe : unsubscribe.bind(state),
         subscribers : subscribers.bind(state),
         calculations: calculations.bind(state)
     });
@@ -91,6 +92,14 @@ function subscribe(path, subscriber) {
 
     this.subscribers[path] = this.subscribers[path] || [];
     this.subscribers[path].push(subscriber);
+}
+
+function unsubscribe(path, subscriber) {
+    path = getPath(path);
+
+    this.subscribers[path] = this.subscribers[path].filter(function(thisSubscriber) {
+        return subscriber !== thisSubscriber;
+    });
 }
 
 /**
