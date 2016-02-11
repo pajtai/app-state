@@ -1,5 +1,5 @@
 # app-state
-v0.4.0
+v0.5.0
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
@@ -66,7 +66,7 @@ state.subscribe('user.profile.library', callback);
 Subscriptions get called on any set that can potentially change them, whether it does or not.
 Can subscribe to properties that do not yet exist.
 
-Te `user.profile.library` subscription gets notified for any of the following set paths:
+The `user.profile.library` subscription gets notified for any of the following set paths:
 
 * `user.profile.library`
 * `user`
