@@ -81,6 +81,10 @@ The `user.profile.library` subscription does not get notified for any of the fol
 
 Unsubscribe from changes on the specified path with the specified callback.
 
+```javascript
+state.unsubscribe('user.profile.library', callback);
+```
+
 ### Subscribers: `state.subscribers(path)` - returns length
 
 Returns number of subscribers on an exact path. Doesn't count longer or shorter paths.
