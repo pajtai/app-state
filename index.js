@@ -97,7 +97,7 @@ function subscribe(path, subscriber) {
 function unsubscribe(path, subscriber) {
     path = getPath(path);
 
-    this.subscribers[path] = this.subscribers[path].filter(function(thisSubscriber) {
+    this.subscribers[path] = _.filter(this.subscribers[path], function(thisSubscriber) {
         return subscriber !== thisSubscriber;
     });
 }
