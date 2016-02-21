@@ -20,7 +20,9 @@ var state = require('app-state').init();
 ```
 
 
-### Init: `require('app-state').init([ options ])` - returns state
+### Init
+
+* `require('app-state').init([ options ])` - returns state
 
 Available options:
 
@@ -28,7 +30,8 @@ Available options:
 
 ## Instance Methods
 
-### Set:
+### Set
+
 * `state(path, value)` - returns state
 * `state.set(path, value)` - returns state
 
@@ -43,7 +46,8 @@ will be created, not arrays.
 
 Subscription notifications are run after setting.
 
-### Get:
+### Get
+
 * `state.get(path)` - returns value
 * `state(path)` - returns value
 
@@ -57,7 +61,9 @@ Will return `undefined` if the path doesn't have objects on it.
 
 Can access items in an array using index numbers with the dot notation.
 
-### Subscribe: `state.subscribe(path..., callback)` - returns state
+### Subscribe
+
+* `state.subscribe(path..., callback)` - returns state
 
 Subscribe for change events to one or many keys with a callback. Callback is called with the state as context and key values as arugments
 
@@ -79,7 +85,9 @@ The `user.profile.library` subscription does not get notified for any of the fol
 * `api`
 * `user.profile.notifications`
 
-### Unsubscribe: `state.unsubscribe(path..., callback)` - returns state
+### Unsubscribe
+
+* `state.unsubscribe(path..., callback)` - returns state
 
 Unsubscribe from changes on the specified path or paths with the specified callback. Must match both all paths and callback of a subscribe to unsubscribe
 
@@ -87,11 +95,15 @@ Unsubscribe from changes on the specified path or paths with the specified callb
 state.unsubscribe('user.profile.library', callback);
 ```
 
-### Subscribers: `state.subscribers(path)` - returns length
+### Subscribers
+
+* `state.subscribers(path)` - returns length
 
 Returns number of subscribers on an exact path. Doesn't count longer or shorter paths. Callbacks are counted even if found path is one of many.
 
-### Transform: `state.transform(key, transformFunction, varargs...)` - returns the new value that was set
+### Transform
+
+* `state.transform(key, transformFunction, varargs...)` - returns the new value that was set
 
 The transform function is called with `state.get(key)` followed by the varargs.
 
