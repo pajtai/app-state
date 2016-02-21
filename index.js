@@ -1,7 +1,7 @@
 'use strict';
 
-var _ = require('lodash'),
-    Model = require('model-object');
+var _       = require('lodash'),
+    Model   = require('model-object');
 
 module.exports = {
     init : init
@@ -159,27 +159,6 @@ function subscribers(path) {
 }
 
 /**
- * An object of calculations to run after each set.
- * The keys are the paths to set.
- * The values should be callbacks that return the value to set.
- * @param calcs
- */
-function calculations(calcs) {
-    var newCalcs = {};
-
-    this._calcs = calcs;
-
-    _.forEach(calcs, function(value, key) {
-        var newPath = getPath(key);
-        newCalcs[newPath] = function() {
-            return value.apply(this, arguments);
-        };
-    });
-    this.model.calculations(newCalcs);
-    return this;
-}
-
-/**
  * Get the value on a path. Returns undefined if can't find it.
  * @param path {string}
  * @returns {*}
@@ -307,23 +286,4 @@ function getPath(path) {
 
 function getOriginalPath(path) {
     return path.slice(5);
-}
-
-/**
- * Subscribe to changes that may affect appState(key).
- * Subsciption is in the form of a stream.
- * The idea is that the stream can be mapped, filtered, etc.
- * @param key
- * @returns {Stream|*}
- */
-function stream(key) {
-    var self = this,
-        subscriptionStream = _h();
-
-    this.subscribe(key, function() {
-        subscriptionStream.write(self(key));
-    });
-
-    subscriptionStream.write(self(key));
-    return subscriptionStream;
 }
