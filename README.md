@@ -3,6 +3,8 @@ v1.0.0
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
+Moderately prettier docs - http://documentup.com/pajtai/app-state
+
 A place to store the object that represents your app state. You can create subscriptions, set, and get paths.
 
 [Chrome extension](https://github.com/Duder-onomy/app-state-chrome-extension)
