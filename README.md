@@ -19,6 +19,19 @@ Create a new app state object:
 var state = require('app-state').init();
 ```
 
+## Usage with Streams
+
+Create a new app state object with streaming support:
+
+```javascript
+var state = require('app-state/stream').init()
+```
+
+## A note on dependencies
+
+Highland and immutable-model-object (which depends on immutablejs) are dependencies that only get required if you 
+choose to use streaming support with `require('app-state/stream')`. If considering the size of this package on the 
+front end, this would be a consideration.
 
 ### Init
 
@@ -26,6 +39,8 @@ var state = require('app-state').init();
 
 Available options:
 
+`options.data` - The data to initialize appState with.
+`options.Model` - if this option is passed in, AppState will use this model as a backer ( `appState.model = options.Model(options.data || {})` )
 `options.devTools` - set this truthy if you want to use the [dev tools Chrome Extension](https://github.com/Duder-onomy/app-state-chrome-extension)
 
 ## Instance Methods
@@ -115,6 +130,34 @@ state.set(key, transformFunction(state.get(key), ...));
 
 This method allows a collection of transform calls to represent allowed ways to update the state. Since these calls
  can be implemented as simple input / output with no side effects, it allows easy testing as well.
+ 
+### Stream
+
+(only available via `var state = require('app-state/stream').init()` )
+
+* `state.stream(key...)` - returns [highland](http://highlandjs.org) stream.
+
+Allows you to subscribe to appState changes in the form of a stream. A stream is returned that is only written
+to when a subscription for the passed in key or keys would run. The value written to the stream is an array of the 
+values subscribed to.
+
+```javascript
+var appState = require('app-state/stream').init();
+    
+appState
+    .stream('user', 'library')
+    .filter(function(data) {
+        var user = data[0];
+        return user.authorized;
+    })
+    .each(function(data) {
+        console.log('user', data[0]);
+        console.log('library', data[1]);
+    });
+```
+
+Making use of streaming allows the managing of app state updates with functional methods. So you can map, filter, reduce, etc.
+your app state updates.
 
 ## Theory
 

@@ -8,9 +8,44 @@ chai.should();
 chai.use(spies);
 
 describe('app state', function() {
+    describe('init', function() {
+        it('should initialize state with empty object', function() {
+            var state = appState.init();
+            state('').should.deep.equal({});
+        });
+        it('should set initial state with options.data', function() {
+            var state = appState.init({
+                data : {
+                    user : {
+                        first : 'Magnolia',
+                        last : 'Mengelson'
+                    }
+                }
+            });
+
+            state('').should.deep.equal({
+                user : {
+                    first : 'Magnolia',
+                    last : 'Mengelson'
+                }
+            });
+        });
+        it('should be able to intiialize with a custom Model with an initial state and get / set methods', function() {
+
+            function Model(initial) {
+                this.model = initial || {}
+            }
+            Model.prototype.get = function(path) { return this.model[path]; };
+            Model.prototype.set = function(path, value) { this.model[path] = '' + value + value; return this; };
+
+            var state = appState.init({ Model : Model });
+            state('double.trouble', 'trouble');
+            state('double.trouble').should.equal('troubletrouble');
+        });
+    });
     describe('set', function() {
         it('can set the root', function() {
-            var state = appState.init({devTools:true});
+            var state = appState.init();
             state.set('', {a:{b:{c:4}}});
             state.get().should.deep.equal({a:{b:{c:4}}});
         });

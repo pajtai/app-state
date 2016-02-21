@@ -15,12 +15,13 @@ function init(options) {
 
     options = options || {};
 
-    var setting = {
+    var ModelUsed = options.Model || Model,
+        setting = {
             ongoing : false,
             devTools : !!options.devTools
         },
         state = {
-            model : Model({}),
+            model : new ModelUsed({ data : options.data || {}}),
             subscribers : []
         },
         instance;
