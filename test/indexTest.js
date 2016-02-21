@@ -201,6 +201,33 @@ describe('app state', function() {
                 state.set('api.version', 42);
                 spy.should.have.been.called.exactly(0);
             });
+            it('will call notified subscribers with the updated value to the subscribed key', function(done) {
+                var state = appState.init();
+
+                state.subscribe('user.name.first', function(firstName) {
+                    firstName.should.equal('jane');
+                    done();
+                });
+
+                state('library', true);
+                state('user.name', {
+                    first : 'jane'
+                });
+            });
+            describe('subscription to multiple keys', function() {
+                it('should be able to subscribe to more than one key', function() {
+                    var state = appState.init(),
+                        spy = chai.spy();
+
+                    state.subscribe('dog', 'cat', spy);
+
+                    state('dog', 'woof');
+                    state('cat', 'meow');
+
+                    spy.should.have.been.called.exactly(2);
+                    spy.__spy.calls[1].should.deep.equal([ 'woof', 'meow']);
+                });
+            });
         });
         describe('subscription order', function() {
             it('will notify subscribers in order subscribed', function() {
@@ -244,49 +271,6 @@ describe('app state', function() {
             state.set('duder.galt', 3);
 
             spy.should.have.been.called.exactly(1);
-        });
-    });
-    describe('calculated properties', function() {
-        it('should be able to set calculated properties', function() {
-            var state = appState.init();
-            state.calculations({
-                'user.name.full' : function() {
-                    return [
-                        state('user.name.first'),
-                        state('user.name.last')
-                    ].join(' ').trim();
-                }
-            });
-
-            state('user.name.first', 'Flim');
-            state('user.name.last', 'Flam');
-            state('user.name.full').should.equal('Flim Flam');
-        });
-
-        it('subscribers should be notified after calculations', function() {
-            var state = appState.init(),
-                spy = chai.spy();
-
-            state.subscribe('user.name.full', function() {
-                spy(state('user.name.full'));
-            });
-
-            state.calculations({
-                'user.name.full': function () {
-                    return [
-                        state('user.name.first'),
-                        state('user.name.last')
-                    ].join(' ').trim();
-                }
-            });
-
-            state('user.name.first', 'Flim');
-            state('user.name.last', 'Flam');
-            state('user.name.full').should.equal('Flim Flam');
-
-            spy.should.have.been.called.exactly(2);
-            spy.__spy.calls[0].should.deep.equal(['Flim']);
-            spy.__spy.calls[1].should.deep.equal(['Flim Flam']);
         });
     });
 });

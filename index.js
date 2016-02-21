@@ -21,7 +21,7 @@ function init(options) {
         },
         state = {
             model : Model({}),
-            subscribers : {}
+            subscribers : []
         },
         instance;
     /**
@@ -54,8 +54,7 @@ function init(options) {
         transform   : transform.bind(instance),
         subscribe   : subscribe.bind(state),
         unsubscribe : unsubscribe.bind(state),
-        subscribers : subscribers.bind(state),
-        calculations: calculations.bind(state)
+        subscribers : subscribers.bind(state)
     });
 }
 
@@ -82,23 +81,65 @@ function shortcut(setting, instance, // bound variable
 
 /**
  *
- * @param path {string}
+ * @param ...path {string}
  * @param subscriber {object}
  * @returns {number}
  */
-function subscribe(path, subscriber) {
+function subscribe() {
+    var length = arguments.length,
+        subscriber,
+        args = [].slice.call(arguments),
+        self = this,
+        paths = args.slice(0, length - 1);
 
-    path = getPath(path);
+        // Add data. to the path to support root level subscriptions
+        // Do it now, so it only needs to be done once
+        paths = _.map(paths, function(path) {
+            return getPath(path);
+        });
 
-    this.subscribers[path] = this.subscribers[path] || [];
-    this.subscribers[path].push(subscriber);
+        subscriber = {
+            callback : arguments[length - 1],
+            paths : paths
+        };
+
+        self.subscribers.push(subscriber);
 }
 
-function unsubscribe(path, subscriber) {
-    path = getPath(path);
+/**
+ * Unsbuscribe using the same signature as subscribe
+ * @param {...}
+ * @param subscriber
+ */
+function unsubscribe() {
+    var length = arguments.length,
+        subscriber,
+        args = [].slice.call(arguments),
+        paths = args.slice(0, length - 1);
 
-    this.subscribers[path] = _.filter(this.subscribers[path], function(thisSubscriber) {
-        return subscriber !== thisSubscriber;
+    // Add data. to the path to support root level subscriptions
+    // Do it now, so it only needs to be done once
+    paths = _.map(paths, function(path) {
+        return getPath(path);
+    });
+
+    subscriber = {
+        callback : arguments[length - 1],
+        paths : paths
+    };
+
+    this.subscribers = _.filter(this.subscribers, function(thisSubscriber) {
+        var keep = false;
+
+        if (thisSubscriber.callback !== subscriber.callback) {
+            keep = true;
+        }
+
+        if (!_.isEqual(thisSubscriber.paths, subscriber.paths)) {
+            keep = true;
+        }
+
+        return keep;
     });
 }
 
@@ -108,8 +149,13 @@ function unsubscribe(path, subscriber) {
  * @returns {number}
  */
 function subscribers(path) {
-    path = getPath(path);
-    return undefined === this.subscribers[path] ? 0 : this.subscribers[path].length;
+    return _.reduce(this.subscribers, function(total, subscriber) {
+        var found = _.find(subscriber.paths, function(thePath) {
+            return getOriginalPath(thePath) === path;
+        });
+
+        return found ? ++total : total;
+    }, 0);
 }
 
 /**
@@ -212,34 +258,35 @@ function notifySubscribers(changedPath, setting, instance) {
         tonotify = [];
 
 
-    _.forEach(this.subscribers, function (subscribers, subscriptionPath) {
+    // TODO: loop in a loop - try to optimize
+    _.forEach(this.subscribers, function (subscriber) {
 
-        // using [.] vs \\. for readability
-        var startsWith = new RegExp('^' + subscriptionPath + '[.]'),
-            contains = new RegExp('^' + changedPath + '[.]');
+        _.forEach(subscriber.paths, function(subscriptionPath) {
+            // using [.] vs \\. for readability
+            var startsWith = new RegExp('^' + subscriptionPath + '[.]'),
+                contains = new RegExp('^' + changedPath + '[.]');
 
-        // Notify if sub path is included in changed path
-        if (startsWith.test(changedPath)) {
-            _.forEach(subscribers, function (subscriber) {
+            // Notify if sub path is included in changed path
+            if (startsWith.test(changedPath)) {
                 tonotify.push(subscriber);
-            });
 
-            // Notify if exact match
-        } else if (subscriptionPath === changedPath) {
-            _.forEach(subscribers, function (subscriber) {
+                // Notify if exact match
+            } else if (subscriptionPath === changedPath) {
                 tonotify.push(subscriber);
-            });
 
-            // Notify if set path is included in subscription path
-        } else if (contains.test(subscriptionPath)) {
-            _.forEach(subscribers, function (subscriber) {
+                // Notify if set path is included in subscription path
+            } else if (contains.test(subscriptionPath)) {
                 tonotify.push(subscriber);
-            });
-        }
+            }
+        });
     });
 
     _.uniq(tonotify).forEach(function (subscriber) {
-        subscriber.call(self, changedPath);
+        var pathsResults = _.map(subscriber.paths, function(path) {
+            return instance.get(getOriginalPath(path));
+        });
+        // Need to slice off "data."
+        subscriber.callback.apply(self, pathsResults);
     });
 
     // Notify chrome extensions last
@@ -256,4 +303,27 @@ function notifySubscribers(changedPath, setting, instance) {
 
 function getPath(path) {
     return path ? 'data.' + path : 'data';
+}
+
+function getOriginalPath(path) {
+    return path.slice(5);
+}
+
+/**
+ * Subscribe to changes that may affect appState(key).
+ * Subsciption is in the form of a stream.
+ * The idea is that the stream can be mapped, filtered, etc.
+ * @param key
+ * @returns {Stream|*}
+ */
+function stream(key) {
+    var self = this,
+        subscriptionStream = _h();
+
+    this.subscribe(key, function() {
+        subscriptionStream.write(self(key));
+    });
+
+    subscriptionStream.write(self(key));
+    return subscriptionStream;
 }

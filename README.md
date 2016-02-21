@@ -1,5 +1,5 @@
 # app-state
-v0.5.0
+v1.0.0
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
@@ -55,12 +55,12 @@ Will return `undefined` if the path doesn't have objects on it.
 
 Can access items in an array using index numbers with the dot notation.
 
-### Subscribe: `state.subscribe(path, callback)` - returns state
+### Subscribe: `state.subscribe(path..., callback)` - returns state
 
-Subscribe for change events with a callback. Callback is called with the state as context:
+Subscribe for change events to one or many keys with a callback. Callback is called with the state as context and key values as arugments
 
 ```javascript
-state.subscribe('user.profile.library', callback);
+state.subscribe('user.profile.library', 'player.hdCapable', function(library, hdCapable) { ... });
 ```
 
 Subscriptions get called on any set that can potentially change them, whether it does or not.
@@ -77,9 +77,9 @@ The `user.profile.library` subscription does not get notified for any of the fol
 * `api`
 * `user.profile.notifications`
 
-### Unsubscribe: `state.unsubscribe(path, callback)` - returns state
+### Unsubscribe: `state.unsubscribe(path..., callback)` - returns state
 
-Unsubscribe from changes on the specified path with the specified callback.
+Unsubscribe from changes on the specified path or paths with the specified callback. Must match both all paths and callback of a subscribe to unsubscribe
 
 ```javascript
 state.unsubscribe('user.profile.library', callback);
@@ -87,16 +87,7 @@ state.unsubscribe('user.profile.library', callback);
 
 ### Subscribers: `state.subscribers(path)` - returns length
 
-Returns number of subscribers on an exact path. Doesn't count longer or shorter paths.
-
-### Calculations: `state.calculations(calculationsObject)` - returns state
-
-The `calculationsObject` is an object where each key is the path of the calculated property to set and the value are
-callbacks that return the desired value to set for that path.
-
-Subscribers are notified after calculations are run.
-
-Caution: every new calculations call clobber all previous calculations. This should be fixed.
+Returns number of subscribers on an exact path. Doesn't count longer or shorter paths. Callbacks are counted even if found path is one of many.
 
 ### Transform: `state.transform(key, transformFunction, varargs...)` - returns the new value that was set
 
@@ -114,7 +105,7 @@ This method allows a collection of transform calls to represent allowed ways to 
 ## Theory
 
 The idea behind having an app state is that it is a unified event channel to communicate
-actions through the app. Views can subscribe to the paths that inform them. Models
+actions through the app. Views can subscribe to the paths that inform them. Models or their agents
 can trigger sets as they acquire new information. Models can also subscribe to app state
 changes to react to changes with business logic.
 
@@ -122,12 +113,18 @@ Having a central communication hub allows the modularization of apps and the add
 modification of features and business logic easily. The app state doesn't contain any
 business logic itself, just the Model layer should have that.
 
-To keep things simply you cannot run a set while another one is running.
+To keep things simple you cannot run a set while another one is running.
 
-The concept is similar to that of a dispatcher in Flux.
+Having a central app state means you can recreate a user scenario by simply saving serialized snapshots of app state.
 
-## Future features:
+There are many ways to incorporate app state into an app. You will probably have data transforms both going into and coming
+out of app state. The transforms going in is part of the contract of how app state is allowed to change. The transforms
+coming out of app state will often be necessitated by how the state is consume by things like view models.
 
-* Ordered subscriptions (before / after other subscription).
-* Implement https://github.com/facebook/immutable-js as the data store.
-* will use get-setter npm as dependency
+## Release Notes
+
+- 1.0.0
+    - Can subscribe to multiple keys with one callback
+    - Subscribe callbacks are called with the values of keys subscribed
+    - **Incompatibility**: Removed computed values, since these should be handle as transforms going in to app-state or transforms coming out of app-state
+    
