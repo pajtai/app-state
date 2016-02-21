@@ -29,9 +29,7 @@ var state = require('app-state/stream').init()
 
 ## A note on dependencies
 
-Highland and immutable-model-object (which depends on immutablejs) are dependencies that only get required if you 
-choose to use streaming support with `require('app-state/stream')`. If considering the size of this package on the 
-front end, this would be a consideration.
+Highland and immutable-model-object (which depends on immutablejs) are dependencies that only get required if you choose to use streaming support with `require('app-state/stream')`. If considering the size of this package on the front end, this would be a consideration.
 
 ### Init
 
@@ -56,8 +54,7 @@ You can use the named method or the shortcut method that is the state instance i
 state.set('user.profile', { library : library });
 ```
 
-You can set paths that don't exist yet. Empty objects will be created. Only empty objects
-will be created, not arrays.
+You can set paths that don't exist yet. Empty objects will be created. Only empty objects will be created, not arrays.
 
 Subscription notifications are run after setting.
 
@@ -86,8 +83,7 @@ Subscribe for change events to one or many keys with a callback. Callback is cal
 state.subscribe('user.profile.library', 'player.hdCapable', function(library, hdCapable) { ... });
 ```
 
-Subscriptions get called on any set that can potentially change them, whether it does or not.
-Can subscribe to properties that do not yet exist.
+Subscriptions get called on any set that can potentially change them, whether it does or not. Can subscribe to properties that do not yet exist.
 
 The `user.profile.library` subscription gets notified for any of the following set paths:
 
@@ -128,8 +124,7 @@ Calling transform is equivalent to:
 state.set(key, transformFunction(state.get(key), ...));
 ```
 
-This method allows a collection of transform calls to represent allowed ways to update the state. Since these calls
- can be implemented as simple input / output with no side effects, it allows easy testing as well.
+This method allows a collection of transform calls to represent allowed ways to update the state. Since these calls can be implemented as simple input / output with no side effects, it allows easy testing as well.
  
 ### Stream
 
@@ -137,9 +132,7 @@ This method allows a collection of transform calls to represent allowed ways to 
 
 * `state.stream(key...)` - returns [highland](http://highlandjs.org) stream.
 
-Allows you to subscribe to appState changes in the form of a stream. A stream is returned that is only written
-to when a subscription for the passed in key or keys would run. The value written to the stream is an array of the 
-values subscribed to.
+Allows you to subscribe to appState changes in the form of a stream. A stream is returned that is only written to when a subscription for the passed in key or keys would run. The value written to the stream is an array of the values subscribed to.
 
 ```javascript
 var appState = require('app-state/stream').init();
@@ -156,27 +149,19 @@ appState
     });
 ```
 
-Making use of streaming allows the managing of app state updates with functional methods. So you can map, filter, reduce, etc.
-your app state updates.
+Making use of streaming allows the managing of app state updates with functional methods. So you can map, filter, reduce, etc. your app state updates.
 
 ## Theory
 
-The idea behind having an app state is that it is a unified event channel to communicate
-actions through the app. Views can subscribe to the paths that inform them. Models or their agents
-can trigger sets as they acquire new information. Models can also subscribe to app state
-changes to react to changes with business logic.
+The idea behind having an app state is that it is a unified event channel to communicate actions through the app. Views can subscribe to the paths that inform them. Models or their agents can trigger sets as they acquire new information. Models can also subscribe to app state changes to react to changes with business logic.
 
-Having a central communication hub allows the modularization of apps and the adding and
-modification of features and business logic easily. The app state doesn't contain any
-business logic itself, just the Model layer should have that.
+Having a central communication hub allows the modularization of apps and the adding and modification of features and business logic easily. The app state doesn't contain any business logic itself, just the Model layer should have that.
 
 To keep things simple you cannot run a set while another one is running.
 
 Having a central app state means you can recreate a user scenario by simply saving serialized snapshots of app state.
 
-There are many ways to incorporate app state into an app. You will probably have data transforms both going into and coming
-out of app state. The transforms going in is part of the contract of how app state is allowed to change. The transforms
-coming out of app state will often be necessitated by how the state is consume by things like view models.
+There are many ways to incorporate app state into an app. You will probably have data transforms both going into and coming out of app state. The transforms going in is part of the contract of how app state is allowed to change. The transforms coming out of app state will often be necessitated by how the state is consume by things like view models.
 
 ## Release Notes
 
