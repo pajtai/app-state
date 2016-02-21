@@ -1,5 +1,5 @@
 # app-state
-v1.0.0
+v1.1.0
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
