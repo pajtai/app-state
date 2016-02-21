@@ -4,6 +4,7 @@ v1.1.0
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
 Download : https://www.npmjs.com/package/app-state - `npm install --save app-state`
+
 Docs : http://documentup.com/pajtai/app-state
 
 A place to store the object that represents your app state. You can create subscriptions, set, and get paths.
