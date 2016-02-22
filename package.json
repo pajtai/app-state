@@ -1,6 +1,6 @@
 {
   "name": "app-state",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "highland": "^2.6.0",
-    "immutable-model-object": "0.0.0",
     "lodash": "^3.10.1",
     "model-object": "0.0.0"
   }

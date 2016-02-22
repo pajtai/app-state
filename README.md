@@ -32,7 +32,7 @@ var state = require('app-state/stream').init()
 
 ## A note on dependencies
 
-Highland and immutable-model-object (which depends on immutablejs) are dependencies that only get required if you choose to use streaming support with `require('app-state/stream')`. If considering the size of this package on the front end, this would be a consideration.
+Highland is dependency that only gets required if you choose to use streaming support with `require('app-state/stream')`. If considering the size of this package on the front end, this would be a consideration.
 
 ### Init
 

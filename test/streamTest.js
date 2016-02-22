@@ -32,8 +32,7 @@ describe('app-state-stream', function() {
         it('should be able to subscribe to multiple keys', function(done) {
 
             var state = appStateStream.init(),
-                stream = state.stream('user.name', 'library'),
-                spy = chai.spy();
+                stream = state.stream('user.name', 'library');
 
 
             state('user.name', 'bob');
@@ -52,7 +51,7 @@ describe('app-state-stream', function() {
         });
         it('should receive stream of subscription updates only', function(done) {
             var state = appStateStream.init(),
-                userStream = state.stream('user');
+                userStream = state.stream('user.name');
 
             // Update should be written to stream
             state('user', {
@@ -70,8 +69,7 @@ describe('app-state-stream', function() {
             userStream.toArray(function(userData) {
                 userData.should.deep.equal([
                     [undefined],
-                    [{ name : 'pat' }],
-                    [{ name : 'pat', authorized : true }]
+                    ['pat']
                 ]);
                 done();
             });

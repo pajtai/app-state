@@ -2,7 +2,6 @@
 
 var _ = require('lodash'),
     H = require('highland'),
-    Model = require('immutable-model-object'),
     AppState = require('../index');
 
 module.exports = {
@@ -10,7 +9,6 @@ module.exports = {
 };
 
 function init(options) {
-    options = _.extend({}, options, { Model : Model });
     var appStateStream = AppState.init(options);
     appStateStream.stream = stream.bind(appStateStream);
     return appStateStream;
