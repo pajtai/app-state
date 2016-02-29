@@ -1,7 +1,8 @@
 'use strict';
 
 var _       = require('lodash'),
-    Model   = require('model-object');
+    Model   = require('model-object'),
+    Transformer = require('./transformer');
 
 module.exports = {
     init : init
@@ -221,7 +222,11 @@ function set(setting, instance, // This variable is bound
  * @param callback
  * @param {...}
  */
-function transform(key, callback) {
+function transform(key) {
+    return new Transformer(key, this);
+}
+
+function transformr(key, callback) {
     var varargs = [].splice.call(arguments, 2),
         result;
 
@@ -231,6 +236,8 @@ function transform(key, callback) {
     this.set(key, result);
     return result;
 }
+
+
 
 function notifySubscribers(changedPath, setting, instance) {
 

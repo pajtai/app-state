@@ -117,9 +117,16 @@ Returns number of subscribers on an exact path. Doesn't count longer or shorter 
 
 ### Transform
 
-* `state.transform(key, transformFunction, varargs...)` - returns the new value that was set
+* `state.transform(key).with(transformFunction).using(varargs...)`
 
-The transform function is called with `state.get(key)` followed by the varargs.
+`state.trasnform` returns an object you can call `with` and `using` on in either order. The transformation is only completed
+after both are called.
+
+The transform function is called with stat.get(key) and the varargs:
+
+```javascript
+state.transform('user').with(function(user, favoriteColor, favoriteDrink) { ... }).using('green', 'White Russian');
+```
 
 Calling transform is equivalent to:
 
@@ -168,6 +175,8 @@ There are many ways to incorporate app state into an app. You will probably have
 
 ## Release Notes
 
+- 2.0.0
+    - **Incompatability**: Changed signature of `transform`
 - 1.0.0
     - Can subscribe to multiple keys with one callback
     - Subscribe callbacks are called with the values of keys subscribed

@@ -110,7 +110,7 @@ describe('app state', function() {
         it('should be able to change a key', function() {
             var state = appState.init();
 
-            state.transform('user.profile.library', libraryTransform, [ 'Tom Sawyer', 'Monte Cristo' ]);
+            state.transform('user.profile.library').with(libraryTransform).using([ 'Tom Sawyer', 'Monte Cristo' ]);
 
             state('').should.deep.equal({
                 user : {
@@ -130,6 +130,28 @@ describe('app state', function() {
 
                 return library;
             }
+        });
+        it('should be able to use varargs with using', function() {
+            var state = appState.init();
+
+            state('user', {
+                name : 'dude'
+            });
+
+            state.transform('user').with(function(user, color, drink) {
+                user.favoriteColor = color;
+                user.favoriteDrink = drink;
+                return user;
+            }).using('green', 'White Russian');
+
+            state('').should.deep
+                .equal({
+                    user : {
+                        name : 'dude',
+                        favoriteColor : 'green',
+                        favoriteDrink : 'White Russian'
+                    }
+                });
         });
     });
     describe('get', function() {
