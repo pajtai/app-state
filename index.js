@@ -17,7 +17,8 @@ function init(options) {
 
     var setting = {
             ongoing : false,
-            devTools : !!options.devTools
+            devTools : !!options.devTools,
+            allowConcurrent : !!options.allowConcurrent
         },
         state = {
             model : Model({}),
@@ -160,7 +161,7 @@ function set(setting, instance, // This variable is bound
     originalPath = path;
 
     // Cannot set while another set is in progress
-    if (setting.ongoing) {
+    if (setting.ongoing && !setting.allowConcurrent) {
         throw new Error('Cannot set while another set is in progress.');
     }
 

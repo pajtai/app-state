@@ -23,6 +23,7 @@ var state = require('app-state').init();
 Available options:
 
 `options.devTools` - set this truthy if you want to use the [dev tools Chrome Extension](https://github.com/Duder-onomy/app-state-chrome-extension)
+`options.allowConcurrent` - set this to truthy if you want to be able to make multiple concurrent set calls
 
 ## Instance Methods
 
