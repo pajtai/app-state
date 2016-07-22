@@ -43,6 +43,7 @@ Available options:
 `options.data` - The data to initialize appState with.
 `options.Model` - if this option is passed in, AppState will use this model as a backer ( `appState.model = options.Model(options.data || {})` )
 `options.devTools` - set this truthy if you want to use the [dev tools Chrome Extension](https://github.com/Duder-onomy/app-state-chrome-extension)
+`options.allowConcurrent` - set this to truthy if you want to be able to make multiple concurrent set calls
 
 ## Instance Methods
 

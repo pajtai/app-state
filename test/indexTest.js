@@ -74,6 +74,20 @@ describe('app state', function() {
             state.set.bind(state, 'user', 0).should.throw(Error);
 
         });
+        it('can set while another set is running if options.allowConcurrent is truthy', function() {
+            var state = appState.init({
+                allowConcurrent : true
+            });
+
+
+            state.subscribe('user', function() {
+                state.set('doing.another.set',0);
+            });
+
+            state.set.bind(state, 'user', 0).should.not.throw(Error);
+
+        });
+
         describe('shortcut set', function() {
             it('can use the shortcut set method', function() {
                 var state = appState.init(),
