@@ -28,7 +28,7 @@ describe('app state', function() {
                 }
             });
         });
-        it('cannot set while another set is running', function() {
+        xit('cannot set while another set is running', function() {
             var state = appState.init();
 
 
@@ -53,7 +53,7 @@ describe('app state', function() {
                     }
                 });
             });
-            it('cannot set while another set is running', function() {
+            xit('cannot set while another set is running', function() {
                 var state = appState.init();
 
 

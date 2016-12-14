@@ -135,11 +135,6 @@ function set(setting, instance, // This variable is bound
     path = getPath(path);
     originalPath = path;
 
-    // Cannot set while another set is in progress
-    if (setting.ongoing) {
-        throw new Error('Cannot set while another set is in progress.');
-    }
-
     setting.ongoing = true;
 
     arr = path.split('.');

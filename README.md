@@ -1,5 +1,5 @@
 # app-state
-v0.2.0-beta.2
+v0.2.0-beta.4
 
 [![Build Status](https://travis-ci.org/pajtai/app-state.svg?branch=master)](https://travis-ci.org/pajtai/app-state)
 
@@ -26,7 +26,7 @@ Available options:
 
 ## Instance Methods
 
-### Set: 
+### Set:
 * `state(path, value)` - returns state
 * `state.set(path, value)` - returns state
 
@@ -41,7 +41,7 @@ will be created, not arrays.
 
 Subscription notifications are run after setting.
 
-### Get: 
+### Get:
 * `state.get(path)` - returns value
 * `state(path)` - returns value
 
@@ -90,7 +90,7 @@ changes to react to changes with business logic.
 
 Having a central communication hub allows the modularization of apps and the adding and
 modification of features and business logic easily. The app state doesn't contain any
-business logic itself, just the Model layer should have that. 
+business logic itself, just the Model layer should have that.
 
 To keep things simply you cannot run a set while another one is running.
 
